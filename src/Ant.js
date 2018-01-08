@@ -64,17 +64,30 @@ class Ant {
 		let sumOfEdgesChances = edgesChances.reduce((sum, currentValue) => sum + currentValue)
 		sumOfEdgesChances = +sumOfEdgesChances.toFixed(12);
 
-		// Count attractions of all edges
-		let goToChances = [];
-		for (let i = 0; i < placesToGo.length; i++) {
-			// 100 * This way value / Sum of all ways value
-			const goToChance = 100 * edgesChances[i] / sumOfEdgesChances;
+		let bestPlaceIndex;
 
-			goToChances.push(goToChance);
+		// If there is edge with 0 weight
+		if (sumOfEdgesChances === Infinity) {
+			let surelyPlacesToGoIndexes = [];
+			for (let i = 0; i < edgesChances.length; i++) {
+				if (edgesChances[i] === Infinity)
+					surelyPlacesToGoIndexes.push(i);
+			}
+
+			const randomPlaceIndex = Math.floor(Math.random() * surelyPlacesToGoIndexes.length);
+			bestPlaceIndex = surelyPlacesToGoIndexes[randomPlaceIndex];
+		} else {
+			// Count attractions of all edges
+			let goToChances = [];
+			for (let i = 0; i < placesToGo.length; i++) {
+				// 100 * This way value / Sum of all ways value
+				const goToChance = 100 * edgesChances[i] / sumOfEdgesChances;
+
+				goToChances.push(goToChance);
+			}
+
+			bestPlaceIndex = getRandomIndexInChanceSegments(goToChances);
 		}
-
-		const bestPlaceIndex = getRandomIndexInChanceSegments(goToChances);
-
 		return placesToGo[bestPlaceIndex];
 	}
 

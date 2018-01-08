@@ -1,7 +1,7 @@
 import AntColony from './AntColony';
 import { outputMapPheromone, getMinInArray } from './Helper';
 
-const COLONIES_AMOUNT = 300;
+const COLONIES_AMOUNT = 200;
 
 class AntAlgo {
 	constructor(map) {
@@ -9,32 +9,51 @@ class AntAlgo {
 	}
 
 	run() {
-		let resultLengths = [];
-
-		let bestResult = {};
+		let allColoniesResults = [];
 
 		for (let i = 0; i < COLONIES_AMOUNT; i++) {
+			let resultLengths = [];
+
 			const colony = new AntColony(this.map);
 			const antsAmount = parseInt(this.map.length / 2);
 			colony.create(antsAmount);
 			colony.findFood();
 
-			if (i === COLONIES_AMOUNT - 1) {
-				const allRoutes = colony.allRoutes;
+			const allRoutes = colony.allRoutes;
 
-				// Get all routes lengths from colony result
-				for (let k = 0; k < allRoutes.length; k++) {
-					resultLengths.push(this.getRouteLength(allRoutes[k]));
-				}
+			// Get all routes lengths from colony result
+			for (let k = 0; k < allRoutes.length; k++) {
+				resultLengths.push(this.getRouteLength(allRoutes[k]));
+			}
 
-				// Find best route and store it length
-				const minLength = getMinInArray(resultLengths);
-				bestResult.route = allRoutes[resultLengths.indexOf(minLength)];
-				bestResult.length = minLength;
+			// Find best route and store it length
+			const minLength = getMinInArray(resultLengths);
+			const bestResultFromColony = {
+				route: allRoutes[resultLengths.indexOf(minLength)],
+				length: minLength
+			};
+
+			allColoniesResults.push(bestResultFromColony);
+		}
+
+		// Find best among all results
+		const bestResult = this.findBestColoniesSolution(allColoniesResults);
+
+		return bestResult;
+	}
+
+	findBestColoniesSolution(allColoniesResults) {
+		let min = Number.MAX_SAFE_INTEGER;
+		let minIndex;
+
+		for (let i = 0; i < allColoniesResults.length; i++) {
+			if (allColoniesResults[i].length < min) {
+				min = allColoniesResults[i].length;
+				minIndex = i;
 			}
 		}
 
-		return bestResult;
+		return allColoniesResults[minIndex];
 	}
 
 	getRouteLength(route) {
