@@ -13,8 +13,7 @@ for (let i = 0; i < taskRaw.length; i++) {
 	task.push(taskRaw[i].split(' ').map(item => new Edge(parseInt(item), 1)));
 }
 
-const AMOUNT_OF_PROGONOK = 60;
-
+const AMOUNT_OF_PROGONOK = 20;
 
 document.querySelector('#startBtn').onclick = function() {
 	let allProgonkiPerfomace = [];
